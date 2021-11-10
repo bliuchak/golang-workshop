@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      target: builder
+    command: reflex -r "\.go$$" -s -- sh -c "go run ./cmd/api"
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/go/src/app
+      - go-cache:/.go-cache
+      - go-mod-cache:/.go-mod-cache
+    networks:
+      - lab
+
+  redis:
+    container_name: storage
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - lab
+
+networks:
+  lab:
+    external: true
+
+volumes:
+  go-cache:
+  go-mod-cache:
